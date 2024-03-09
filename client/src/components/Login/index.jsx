@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
+import logo from "../../images/logo.png"
 
 const Login = () => {
 	const [data, setData] = useState({ email: "", password: "" });
@@ -31,6 +32,9 @@ const Login = () => {
 
 	return (
 		<div className={styles.login_container}>
+			<div className={styles.logo_container}> {/* New div for logo */}
+                <img src={logo} alt="Logo" className={styles.logo} /> {/* Logo */}
+            </div>
 			<div className={styles.login_form_container}>
 				<div className={styles.left}>
 					<form className={styles.form_container} onSubmit={handleSubmit}>

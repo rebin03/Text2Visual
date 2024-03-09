@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
+import logo from "../../images/logo.png"
 
 const Signup = () => {
 	const [data, setData] = useState({
@@ -37,6 +38,9 @@ const Signup = () => {
 
 	return (
 		<div className={styles.signup_container}>
+			<div className={styles.logo_container}> {/* New div for logo */}
+                <img src={logo} alt="Logo" className={styles.logo} /> {/* Logo */}
+            </div>
 			<div className={styles.signup_form_container}>
 				<div className={styles.left}>
 					<h1>Welcome Back</h1>
