@@ -107,11 +107,11 @@
 }
 
 .logo_container {
-    margin-top: 20px; /* Adjust as needed */
-    margin-bottom: 50px; /* Adjust as needed */
+    margin-top: 20px;
+    margin-bottom: 50px;
 }
 
 .logo {
-    width: 300px; /* Adjust the width as needed */
-    height: auto; /* Maintain aspect ratio */
+    width: 300px;
+    height: auto;
 }

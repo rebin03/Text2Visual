@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+// To make sure we get an error if a required field is missing in the query filterconst Schema = mongoose.Schema;
+mongoose.set('strictQuery', true); 
+
+
 module.exports = () => {
 	const connectionParams = {
 		useNewUrlParser: true,

@@ -38,8 +38,8 @@ const Signup = () => {
 
 	return (
 		<div className={styles.signup_container}>
-			<div className={styles.logo_container}> {/* New div for logo */}
-                <img src={logo} alt="Logo" className={styles.logo} /> {/* Logo */}
+			<div className={styles.logo_container}>
+                <img src={logo} alt="Logo" className={styles.logo} />
             </div>
 			<div className={styles.signup_form_container}>
 				<div className={styles.left}>
