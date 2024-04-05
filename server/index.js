@@ -7,6 +7,10 @@ const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const imagesRoutes  = require('./routes/images');
 const path = require("path");
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+
 
 // database connection
 connection();
@@ -21,7 +25,9 @@ app.use("/images", express.static(path.join(__dirname, "public", "images")));
 // routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use( "/api/images" , imagesRoutes) ;
+app.use( "/api/images" , imagesRoutes);
+app.use("/api/delete", imagesRoutes)
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, console.log(`Listening on port ${port}...`));

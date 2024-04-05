@@ -1,8 +1,9 @@
 import styles from "./styles.module.css";
-import logo from "../../images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-const Navbar = () => {
+const NavbarEdit = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -17,14 +18,8 @@ const Navbar = () => {
       <nav className={styles.navbar}>
         <div className={styles.left_container}>
           <div className={styles.logo_container}>
-            <img src={logo} alt="Logo" className={styles.logo} />
-          </div>
-          <div className={styles.nav_links}>
-            <Link to="/generate" className={styles.nav_link}>
-              Generate
-            </Link>
             <Link to="/gallery" className={styles.nav_link}>
-              Gallery
+                <FontAwesomeIcon icon={faArrowLeft} className={styles.icon}/>
             </Link>
           </div>
         </div>
@@ -36,4 +31,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarEdit;

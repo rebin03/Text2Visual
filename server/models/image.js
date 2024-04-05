@@ -1,20 +1,12 @@
 const mongoose = require("mongoose");
 
-
 const imageSchema = new mongoose.Schema({
-  description: {
-    type: String,
-    required: true,
-  },
-  imageURL: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  imageData: { type: Buffer, required: true },
+  fileName: { type: String, required: true },
+  contentType: { type: String, required: true },
+  inputText: { type: String, required: true }
 });
+
 
 // Create a model based on the schema
 const Image = mongoose.model("Image", imageSchema);

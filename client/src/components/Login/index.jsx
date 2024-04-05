@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import logo from "../../images/logo.png"
 
 const Login = () => {
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+		navigate("/generate", { replace: true });
+		}
+	}, [navigate]);
+
 	const [data, setData] = useState({ email: "", password: "" });
 	const [error, setError] = useState("");
 
@@ -18,7 +27,8 @@ const Login = () => {
 			const url = "http://localhost:8080/api/auth";
 			const { data: res } = await axios.post(url, data);
 			localStorage.setItem("token", res.data);
-			window.location = "/";
+			navigate("/generate", { replace: true });
+			// window.location = "/";
 		} catch (error) {
 			if (
 				error.response &&

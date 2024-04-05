@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './styles.module.css'
 import ImageCard from './ImageCard';
+import Navbar from '../Navbar/Navbar';
 
 const ImageGallery = () => {
   const [images, setImages] = useState([]);
@@ -14,22 +15,25 @@ const ImageGallery = () => {
     try {
         const response = await axios.get('http://localhost:8080/api/images');
         const imagesData = response.data;
-        const imagesWithUrls = imagesData.map(image => ({
-          ...image,
-          imageURL: `http://localhost:8080/api/images/${image.imageURL.replace(/\\/g, "/")}`
-        }));
-        setImages(imagesWithUrls);
-        console.log(imagesWithUrls);
-      } catch (error) {
+        setImages(imagesData);
+    } catch (error) {
         console.error('Error fetching images:', error);
-      }
+    }
+  };
+
+  const handleImageDelete = async () => {
+    // After successful deletion, refetch the images
+    window.location.reload();
   };
 
   return (
-    <div className={styles.image_gallery}>
+    <div>
+      <Navbar/>
+      <div className={styles.image_gallery}>
       {images.map(image => (
-        <ImageCard key={image._id} image={image} />
+        <ImageCard key={image._id} image={image} onDelete={handleImageDelete}/>
       ))}
+    </div>
     </div>
   );
 };

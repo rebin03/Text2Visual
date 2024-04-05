@@ -5,9 +5,18 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-    position: fixed;
+  position: fixed;
+  z-index: 999;
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1; /* Ensure the navbar is on top */
+  /* Add your navbar styles here */
+}
 .navbar h1 {
 	color: white;
 	font-size: 25px;
@@ -61,4 +70,15 @@
 	font-size: 14px;
 	cursor: pointer;
 	margin-right: 20px;
+}
+
+.icon {
+  font-size: 2rem;
+  color: white;
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.icon :hover {
+   color: #cfa7ff;
 }

@@ -4,6 +4,7 @@ const multer = require('multer')
 const path  = require("path");
 const fs = require('fs');
 const Image = require('../models/image');
+const { v4: uuidv4 } = require('uuid');
 
 // Configure multer for handling file uploads
 const storage = multer.diskStorage({
@@ -11,34 +12,96 @@ const storage = multer.diskStorage({
       cb(null, 'public/images');
     },
     filename: function (req, file, cb) {
-      cb(null, file.originalname  + '_' + Date.now() + path.extname(file.originalname));
+      cb(null, file.originalname + '_' + Date.now() + path.extname(file.originalname));
     }
   });
   
-  const upload = multer({ storage: storage });
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5 MB file size limit
+    }
+});
 
-  
-  // Route to save generated images
-  router.post('/', upload.single('image'), async (req, res) => {
+  //Route to save image from client
+  router.post('/save', async (req, res) => {
     try {
-      // Extract image data from request body
-      const { description } = req.body;
-      const imageURL = req.file.path; 
+        // Extract image data from request body
+        const { imageData } = req.body;
 
-      // Create a new image document
-      const newImage = new Image({
-        description,
-        imageURL
-      });
-  
-      // Save the image to the database
-      await newImage.save();
-  
-      res.status(201).json({ message: 'Image saved successfully' });
+        // Create a new image document
+        const newImage = new Image({ imageData });
+
+        // Save the image to the database
+        await newImage.save();
+
+        res.status(201).json({ message: 'Image saved successfully' });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to save image' });
+        console.error(error);
+        res.status(500).json({ error: 'Failed to save image' });
     }
-  });
+});
+
+// Route to save edited image from client
+router.post('/saveEdit', async (req, res) => {
+  try {
+    const { imageData } = req.body;
+    const decodedImage = Buffer.from(imageData, 'base64');
+
+    const newImage = new Image({
+      contentType: 'image/jpeg', // Assuming JPEG format
+      imageData: decodedImage,
+      // Add other image metadata if needed (e.g., filename, inputText)
+    });
+
+    await newImage.save();
+    res.status(201).json({ message: 'Image saved successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to save image' });
+  }
+});
+
+  // Route to save generated images via uploads
+  router.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file was uploaded' });
+    }
+
+    // Extract the input text from the request body
+    const inputText = req.body.inputText;
+
+    // Generate a unique identifier
+    const uniqueId = uuidv4();
+
+    // Create a unique file name by combining the original file name and the unique identifier
+    const uniqueFileName = `${uniqueId}_${req.file.originalname}`;
+
+    console.log('File buffer:', req.file.buffer);
+    console.log('Received file:', req.file);
+        // Extract image file from the request
+        const imageFile = req.file;
+
+        // Create a new image document
+        const newImage = new Image({
+          imageData: req.file.buffer, // Use req.file.buffer instead of imageFile.buffer
+          fileName: uniqueFileName,
+          contentType: req.file.mimetype,
+          inputText: inputText
+      });
+
+        console.log('New Image:', newImage);
+        // Save the image to the database
+        await newImage.save();
+
+        res.status(201).json({ message: 'Image saved successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to save image' });
+    }
+});
 
 // Route to retrieve all images
 router.get('/', async (req, res) => {
@@ -58,10 +121,8 @@ router.get('/:id', async (req, res) => {
   try {
     // Extract image ID from request parameters
     const { id } = req.params;
-
     // Find the image by ID in the database
     const image = await Image.findById(id);
-
     // Send the image data as a response
     if (image) {
       res.json(image);
@@ -69,9 +130,51 @@ router.get('/:id', async (req, res) => {
       res.status(404).json({ error: 'Image not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve image' });
+    console.error('Error retrieving image:', error);
+    // Check the error type and return an appropriate error message
+    if (error.name === 'CastError') {
+      res.status(400).json({ error: 'Invalid image ID' });
+    } else {
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 });
+
+// Route to update an existing image
+router.put('/:id', upload.single('image'), async (req, res) => {
+  try {
+    // Extract image ID from request parameters
+    const { id } = req.params;
+
+    // Find the image by ID in the database
+    const existingImage = await Image.findById(id);
+
+    if (!existingImage) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file was uploaded' });
+    }
+
+    // Extract the input text from the request body
+    const inputText = req.body.inputText;
+
+    // Update image data
+    existingImage.imageData = req.file.buffer;
+    existingImage.contentType = req.file.mimetype;
+    existingImage.inputText = inputText;
+
+    // Save the updated image to the database
+    await existingImage.save();
+
+    res.json({ message: 'Image updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update image' });
+  }
+});
+
 
 // Route to delete a specific image by ID
 router.delete('/:id', async (req, res) => {

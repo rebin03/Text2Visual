@@ -35,7 +35,7 @@ const Signup = () => {
 			}
 		}
 	};
-
+	
 	return (
 		<div className={styles.signup_container}>
 			<div className={styles.logo_container}>

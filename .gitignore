@@ -1,4 +1,11 @@
 /client/node_modules
+/client/src/models
+/client/.env.development
+/client/src/components/Navbar/Nav.jsx
+/client/src/components/Generate
+
+/client/src/components/Editing
 
 /server/node_modules
 /server/.env
+/server/public/images
