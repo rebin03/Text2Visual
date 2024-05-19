@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import logo from "../../images/logo.png"
+import secureLocalStorage from "react-secure-storage"
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -26,7 +27,8 @@ const Login = () => {
 		try {
 			const url = "http://localhost:8080/api/auth";
 			const { data: res } = await axios.post(url, data);
-			localStorage.setItem("token", res.data);
+			localStorage.setItem("token", res.data.token);
+			secureLocalStorage.setItem("userId", res.data.userId);
 			navigate("/generate", { replace: true });
 			// window.location = "/";
 		} catch (error) {

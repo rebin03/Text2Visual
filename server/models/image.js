@@ -4,7 +4,8 @@ const imageSchema = new mongoose.Schema({
   imageData: { type: Buffer, required: true },
   fileName: { type: String, required: true },
   contentType: { type: String, required: true },
-  inputText: { type: String, required: true }
+  inputText: { type: String, required: true },
+  userId : {type: String, required: true} 
 });
 
 

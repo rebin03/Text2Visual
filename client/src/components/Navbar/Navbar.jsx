@@ -1,12 +1,14 @@
 import styles from "./styles.module.css";
 import logo from "../../images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 
 const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    secureLocalStorage.removeItem("userId");
     navigate("/login", { replace: true });
     // window.location.replace("/login");
     // window.location.reload();

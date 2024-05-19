@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './styles.module.css'
 import ImageCard from './ImageCard';
 import Navbar from '../Navbar/Navbar';
+import secureLocalStorage from 'react-secure-storage';
 
 const ImageGallery = () => {
   const [images, setImages] = useState([]);
@@ -13,7 +14,8 @@ const ImageGallery = () => {
 
   const fetchImages = async () => {
     try {
-        const response = await axios.get('http://localhost:8080/api/images');
+        const userId = secureLocalStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:8080/api/images/gallery/${userId}`);
         const imagesData = response.data;
         setImages(imagesData);
     } catch (error) {

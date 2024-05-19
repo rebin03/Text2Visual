@@ -5,6 +5,7 @@ const path  = require("path");
 const fs = require('fs');
 const Image = require('../models/image');
 const { v4: uuidv4 } = require('uuid');
+const { log } = require('console');
 
 // Configure multer for handling file uploads
 const storage = multer.diskStorage({
@@ -23,43 +24,31 @@ const storage = multer.diskStorage({
     }
 });
 
-  //Route to save image from client
-  router.post('/save', async (req, res) => {
-    try {
-        // Extract image data from request body
-        const { imageData } = req.body;
-
-        // Create a new image document
-        const newImage = new Image({ imageData });
-
-        // Save the image to the database
-        await newImage.save();
-
-        res.status(201).json({ message: 'Image saved successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to save image' });
-    }
-});
-
 // Route to save edited image from client
-router.post('/saveEdit', async (req, res) => {
+router.post('/saveEdit', upload.single('image'), async (req, res) => {
   try {
-    const { imageData } = req.body;
-    const decodedImage = Buffer.from(imageData, 'base64');
 
+    
+    const { userId , fileName, inputText } = req.body;
+
+    // Create a new image document
     const newImage = new Image({
-      contentType: 'image/jpeg', // Assuming JPEG format
-      imageData: decodedImage,
-      // Add other image metadata if needed (e.g., filename, inputText)
+      imageData: req.file.buffer,
+      fileName: fileName + 'editted',
+      contentType: req.file.mimetype,
+      inputText: inputText,
+      userId: userId,
     });
 
+    // Save the updated image to the database
     await newImage.save();
-    res.status(201).json({ message: 'Image saved successfully' });
+
+    res.json({ message: 'Image updated successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to save image' });
+    res.status(500).json({ error: 'Failed to update image' });
   }
+
 });
 
   // Route to save generated images via uploads
@@ -72,6 +61,7 @@ router.post('/saveEdit', async (req, res) => {
 
     // Extract the input text from the request body
     const inputText = req.body.inputText;
+    const userId = req.body.userId;
 
     // Generate a unique identifier
     const uniqueId = uuidv4();
@@ -89,7 +79,8 @@ router.post('/saveEdit', async (req, res) => {
           imageData: req.file.buffer, // Use req.file.buffer instead of imageFile.buffer
           fileName: uniqueFileName,
           contentType: req.file.mimetype,
-          inputText: inputText
+          inputText: inputText,
+          userId: userId,
       });
 
         console.log('New Image:', newImage);
@@ -103,11 +94,15 @@ router.post('/saveEdit', async (req, res) => {
     }
 });
 
-// Route to retrieve all images
-router.get('/', async (req, res) => {
+// Route to retrieve all images of a user
+router.get('/gallery/:userId', async (req, res) => {
   try {
+
+    //get token form req params
+    const { userId } = req.params;
+
     // Fetch all images from the database
-    const images = await Image.find();
+    const images = await Image.find({userId : userId});
 
     // Send the list of images as a response
     res.json(images);
@@ -119,6 +114,7 @@ router.get('/', async (req, res) => {
 // Route to retrieve a specific image by ID
 router.get('/:id', async (req, res) => {
   try {
+
     // Extract image ID from request parameters
     const { id } = req.params;
     // Find the image by ID in the database
@@ -143,6 +139,7 @@ router.get('/:id', async (req, res) => {
 // Route to update an existing image
 router.put('/:id', upload.single('image'), async (req, res) => {
   try {
+    
     // Extract image ID from request parameters
     const { id } = req.params;
 
@@ -157,13 +154,10 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'No file was uploaded' });
     }
 
-    // Extract the input text from the request body
-    const inputText = req.body.inputText;
 
     // Update image data
     existingImage.imageData = req.file.buffer;
     existingImage.contentType = req.file.mimetype;
-    existingImage.inputText = inputText;
 
     // Save the updated image to the database
     await existingImage.save();
