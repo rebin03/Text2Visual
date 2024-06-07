@@ -7,6 +7,8 @@ import downloadIcon from "../../images/download.png"
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const ImageCard = ({ image, onDelete }) => {
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -20,7 +22,7 @@ const ImageCard = ({ image, onDelete }) => {
     try {
       // Make a DELETE request to the backend API
       const response = await axios.delete(
-        `http://localhost:8080/api/delete/${image._id}`,
+        `${BASE_URL}/api/delete/${image._id}`,
       );
       console.log(response.data);
     } catch (error) {

@@ -4,6 +4,8 @@ import styles from './styles.module.css'
 import Navbar from "../Navbar/Navbar";
 import secureLocalStorage from 'react-secure-storage';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const Nav = () => {
     const [inputTxt, setInputTxt] = useState('');
     const [imageSrc, setImageSrc] = useState('');
@@ -124,7 +126,7 @@ const Nav = () => {
 
     
             // Send the FormData to the backend server using Axios
-            const backendResponse = await axios.post('http://localhost:8080/api/images/upload', formData, {
+            const backendResponse = await axios.post(`${BASE_URL}/api/images/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

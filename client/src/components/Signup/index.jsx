@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import logo from "../../images/logo.png"
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 const Signup = () => {
 	const [data, setData] = useState({
 		firstName: "",
@@ -21,7 +23,7 @@ const Signup = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const url = "http://localhost:8080/api/users";
+			const url = `${BASE_URL}/api/users`;
 			const { data: res } = await axios.post(url, data);
 			navigate("/login");
 			console.log(res.message);

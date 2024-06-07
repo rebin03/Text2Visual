@@ -6,6 +6,7 @@ import { Buffer } from 'buffer/';
 import axios from "axios";
 import NavbarEdit from "../Navbar/NavbarEdit";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const filterOptions = [
   { id: "brightness", name: "Brightness" },
@@ -35,7 +36,7 @@ function ImageEdit({ id }) {
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/images/${id}`);
+        const response = await axios.get(`${BASE_URL}/api/images/${id}`);
         setImage(response.data);
       } catch (error) {
         console.error('Error fetching image:', error);
@@ -86,7 +87,7 @@ function ImageEdit({ id }) {
       formData.append('userId', image.userId);
 
       // Send the filtered image data to the backend
-      await axios.post(`http://localhost:8080/api/images/saveEdit`, formData);
+      await axios.post(`${BASE_URL}/api/images/saveEdit`, formData);
       
       // Optionally, you can also update the state or show a success message here
       console.log('Image saved successfully!');
