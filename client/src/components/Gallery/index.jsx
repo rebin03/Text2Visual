@@ -17,7 +17,7 @@ const ImageGallery = () => {
   const fetchImages = async () => {
     try {
         const userId = secureLocalStorage.getItem('userId');
-        const response = await axios.get(`${BASE_URL}/images/gallery/${userId}`);
+        const response = await axios.get(`${BASE_URL}/api/images/gallery/${userId}`);
         const imagesData = response.data;
         setImages(imagesData);
     } catch (error) {
