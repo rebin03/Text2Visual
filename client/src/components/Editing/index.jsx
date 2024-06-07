@@ -125,7 +125,7 @@ function ImageEdit({ id }) {
       formData.append('image', blob);
   
       // Send the filtered image data to the backend
-      await axios.put(`http://localhost:8080/api/images/${id}`, formData);
+      await axios.put(`${BASE_URL}/api/images/${id}`, formData);
   
       // Optionally, you can also update the state or show a success message here
       console.log('Image updated successfully!');
